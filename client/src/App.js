@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:5000');
+
 
 function App() {
   const [gameState, setGameState] = useState([]);
@@ -8,6 +12,17 @@ function App() {
 
   useEffect(() => {
     getGameState();
+
+    // Listen for 'game_state' event from the server
+    socket.on('game_state', (data) => {
+      setGameState(data.matrix);
+      setCurrentPlayer(data.current_player);
+    });
+
+    return () => {
+      // Clean up the event listener when the component unmounts
+      socket.off('game_state');
+    };
   }, []);
 
   const getGameState = async () => {

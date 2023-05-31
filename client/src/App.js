@@ -3,6 +3,7 @@ import axios from 'axios';
 
 function App() {
   const [gameState, setGameState] = useState([]);
+  const [currentPlayer, setCurrentPlayer] = useState('');
 
   useEffect(() => {
     getGameState();
@@ -11,7 +12,8 @@ function App() {
   const getGameState = async () => {
     try {
       const response = await axios.get('http://localhost:5000/game');
-      setGameState(response.data);
+      setGameState(response.data.matrix);
+      setCurrentPlayer(response.data.current_player);
     } catch (error) {
       console.error(error);
     }
@@ -46,6 +48,7 @@ function App() {
           ))}
         </tbody>
       </table>
+      <h1>Current Player: {currentPlayer}</h1>
     </div>
   );
 }

@@ -5,7 +5,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 # Matrix representation of the Tic Tac Toe game
-matrix = [['X', 'O', 'X'], ['X', 'O', 'X'], ['X', 'X', 'X']]
+matrix = [['-', '-', 'X'], ['X', 'O', 'X'], ['X', 'X', 'X']]
 
 # Current player
 current_player = 'X'
@@ -13,7 +13,10 @@ current_player = 'X'
 # Route for getting the current game state
 @app.route('/game', methods=['GET'])
 def get_game_state():
-    return jsonify(matrix)
+    return jsonify({
+        'matrix': matrix,     
+        'current_player': current_player
+    })
 
 # Route for making a move
 @app.route('/move', methods=['POST'])

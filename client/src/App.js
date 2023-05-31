@@ -51,6 +51,15 @@ function App() {
     }
   };
 
+  const restartGame = async () => {
+    try {
+      await axios.post('http://localhost:5000/restart');
+      getGameState();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <h1>Tic Tac Toe</h1>
@@ -86,11 +95,17 @@ function App() {
           ))}
         </tbody>
       </table>
-      {winner !== '-' && (
+      {(winner === 'X' || winner === 'O') && (
         <h2>The winner is: {winner}</h2>
       )}
       {winner === '-' && (
         <h2>Current Player: {currentPlayer}</h2>
+      )}
+      {winner === 'tie' &&(
+        <h2>Tied Match!</h2>
+      )}
+      {winner !== '-' &&(
+        <button onClick={restartGame}>Restart</button>
       )}
     </div>
   );

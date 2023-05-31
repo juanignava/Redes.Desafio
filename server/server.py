@@ -39,8 +39,13 @@ def check_winner():
         return matrix[0][0]
     if matrix[0][2] == matrix[1][1] == matrix[2][0] != '-':
         return matrix[0][2]
+    
+    for row in matrix:
+        for col in row:
+            if col == '-':
+                return '-'
 
-    return '-'
+    return 'tie'
 
 
 # Route for getting the current game state
@@ -73,6 +78,21 @@ def make_move():
     emit_game_state()
 
     return jsonify({'message': 'Move successful'})
+
+# Route for restarting the game
+@app.route('/restart', methods=['POST'])
+def restart_game():
+    global matrix, current_player, winner
+
+    # Reset the game state
+    matrix = [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']]
+    current_player = 'X'
+    winner = '-'
+
+    # Emit updated game state to connected clients
+    emit_game_state()
+
+    return jsonify({'message': 'Game restarted'})
 
 @socketio.on('connect')
 def handle_connect():

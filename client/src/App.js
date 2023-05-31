@@ -9,6 +9,7 @@ function App() {
   const [gameState, setGameState] = useState([]);
   const [currentPlayer, setCurrentPlayer] = useState('');
   const [isPlayerX, setIsPlayerX] = useState(true);
+  const [winner, setWinner] = useState('');
 
   useEffect(() => {
     getGameState();
@@ -17,6 +18,7 @@ function App() {
     socket.on('game_state', (data) => {
       setGameState(data.matrix);
       setCurrentPlayer(data.current_player);
+      setWinner(data.winner);
     });
 
     return () => {
@@ -30,13 +32,14 @@ function App() {
       const response = await axios.get('http://localhost:5000/game');
       setGameState(response.data.matrix);
       setCurrentPlayer(response.data.current_player);
+      setWinner(response.data.winner);
     } catch (error) {
       console.error(error);
     }
   };
 
   const makeMove = async (row, col) => {
-    if (currentPlayer !== (isPlayerX ? 'X' : 'O')) {
+    if (currentPlayer !== (isPlayerX ? 'X' : 'O') || winner !== '-') {
       return;
     }
 
@@ -74,7 +77,7 @@ function App() {
                     backgroundColor:
                       currentPlayer === cell ? 'lightgreen' : 'transparent',
                   }}
-                  disabled={cell !== '-' || currentPlayer !== (isPlayerX ? 'X' : 'O')}
+                  disabled={cell !== '-' || currentPlayer !== (isPlayerX ? 'X' : 'O') || winner !== '-'}
                 >
                   {cell}
                 </td>
@@ -83,7 +86,12 @@ function App() {
           ))}
         </tbody>
       </table>
-      <h1>Current Player: {currentPlayer}</h1>
+      {winner !== '-' && (
+        <h2>The winner is: {winner}</h2>
+      )}
+      {winner === '-' && (
+        <h2>Current Player: {currentPlayer}</h2>
+      )}
     </div>
   );
 }

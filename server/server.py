@@ -11,14 +11,36 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 
 
 # Matrix representation of the Tic Tac Toe game
-matrix = [['-', '-', 'X'], ['X', 'O', 'X'], ['X', 'X', 'X']]
+matrix = [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']]
 
 # Current player
 current_player = 'X'
 
+winner = '-'
+
 # Emit game state to connected clients
 def emit_game_state():
-    socketio.emit('game_state', {'matrix': matrix, 'current_player': current_player})
+    socketio.emit('game_state', {'matrix': matrix, 'current_player': current_player, 'winner': winner})
+
+# Function to check for a winner
+def check_winner():
+    # Check rows
+    for row in matrix:
+        if row[0] == row[1] == row[2] != '-':
+            return row[0]
+
+    # Check columns
+    for col in range(3):
+        if matrix[0][col] == matrix[1][col] == matrix[2][col] != '-':
+            return matrix[0][col]
+
+    # Check diagonals
+    if matrix[0][0] == matrix[1][1] == matrix[2][2] != '-':
+        return matrix[0][0]
+    if matrix[0][2] == matrix[1][1] == matrix[2][0] != '-':
+        return matrix[0][2]
+
+    return '-'
 
 
 # Route for getting the current game state
@@ -26,13 +48,14 @@ def emit_game_state():
 def get_game_state():
     return jsonify({
         'matrix': matrix,     
-        'current_player': current_player
+        'current_player': current_player,
+        'winner': winner
     })
 
 # Route for making a move
 @app.route('/move', methods=['POST'])
 def make_move():
-    global matrix, current_player
+    global matrix, current_player, winner
 
     data = request.get_json()
     row = data['row']
@@ -43,6 +66,8 @@ def make_move():
 
     # Toggle the current player for the next move
     current_player = 'O' if current_player == 'X' else 'X'
+
+    winner = check_winner()
 
     # Emit updated game state to connected clients
     emit_game_state()

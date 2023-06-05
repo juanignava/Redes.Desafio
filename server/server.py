@@ -11,42 +11,62 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 
 
 # Matrix representation of the Tic Tac Toe game
-matrix = [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']]
+matrix = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
 
 # Current player
 current_player = 'X'
 
 winner = '-'
 
+new_player = 'X'
+
 # Emit game state to connected clients
 def emit_game_state():
     socketio.emit('game_state', {'matrix': matrix, 'current_player': current_player, 'winner': winner})
+
+
+
 
 # Function to check for a winner
 def check_winner():
     # Check rows
     for row in matrix:
-        if row[0] == row[1] == row[2] != '-':
+        if row[0] == row[1] == row[2] != ' ':
             return row[0]
 
     # Check columns
     for col in range(3):
-        if matrix[0][col] == matrix[1][col] == matrix[2][col] != '-':
+        if matrix[0][col] == matrix[1][col] == matrix[2][col] != ' ':
             return matrix[0][col]
 
     # Check diagonals
-    if matrix[0][0] == matrix[1][1] == matrix[2][2] != '-':
+    if matrix[0][0] == matrix[1][1] == matrix[2][2] != ' ':
         return matrix[0][0]
-    if matrix[0][2] == matrix[1][1] == matrix[2][0] != '-':
+    if matrix[0][2] == matrix[1][1] == matrix[2][0] != ' ':
         return matrix[0][2]
     
     for row in matrix:
         for col in row:
-            if col == '-':
-                return '-'
+            if col == ' ':
+                return ' '
 
     return 'tie'
 
+
+@app.route("/turnInfo", methods=['GET'])
+def get_turn_info():
+
+    global new_player
+    actual_turn = new_player
+    
+    if new_player=='X':
+        new_player = "O"
+    else:
+        new_player = 'X'
+    
+    return jsonify({
+        "turn":actual_turn
+    })
 
 # Route for getting the current game state
 @app.route('/game', methods=['GET'])
@@ -85,9 +105,9 @@ def restart_game():
     global matrix, current_player, winner
 
     # Reset the game state
-    matrix = [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']]
+    matrix = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
     current_player = 'X'
-    winner = '-'
+    winner = ' '
 
     # Emit updated game state to connected clients
     emit_game_state()

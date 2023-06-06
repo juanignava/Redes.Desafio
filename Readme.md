@@ -4,8 +4,13 @@
 
 1. Move to the server directory `cd server`
 2. Install python and pip on your computer.
-3. Instrall the required dependencies of the server by running `pip install flask flask_cors flask_socketio eventlet`
+3. Install the required dependencies of the server by running `pip install flask flask_cors flask_socketio eventlet`
 4. Run the server with `python server.py`
+
+### Instructions to run the backend
+1. Move to the server directory `cd server`
+2. Install python and pip on your computer.
+3. Run the test units with `python test_unit.py`
 
 ### Instructions to run the frontend
 

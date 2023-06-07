@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 
 import './App.css'
 
-const socket = io('http://localhost:5000');
+const socket = io('http://192.168.18.126:5000');
 
 
 function App() {
@@ -32,7 +32,7 @@ function App() {
 
   const getGameState = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/game');
+      const response = await axios.get('http://192.168.18.126:5000/game');
       setGameState(response.data.matrix);
       console.log(response)
       setCurrentPlayer(response.data.current_player);
@@ -44,7 +44,7 @@ function App() {
 
   const getTurnInfo = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/turnInfo');
+      const response = await axios.get('http://192.168.18.126:5000/turnInfo');
       if (response.data.turn == 'X') setIsPlayerX(true)
       else setIsPlayerX(false);
     } catch (error) {
@@ -58,7 +58,7 @@ function App() {
     }
 
     try {
-      await axios.post('http://localhost:5000/move', { row, col });
+      await axios.post('http://192.168.18.126:5000/move', { row, col });
       getGameState();
     } catch (error) {
       console.error(error);
@@ -67,7 +67,7 @@ function App() {
 
   const restartGame = async () => {
     try {
-      await axios.post('http://localhost:5000/restart');
+      await axios.post('http://192.168.18.126:5000/restart');
       getGameState();
     } catch (error) {
       console.error(error);

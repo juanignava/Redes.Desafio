@@ -120,4 +120,4 @@ def handle_connect():
 
 if __name__ == '__main__':
     CORS(app)
-    socketio.run(app)
+    socketio.run(app, host='0.0.0.0')
